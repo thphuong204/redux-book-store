@@ -7,13 +7,15 @@ import api from "../apiService";
 import { FormProvider } from "../form";
 import { useForm } from "react-hook-form";
 import { Container, Alert, Box, Card, Stack, CardMedia, CardActionArea, Typography, CardContent } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { getBooks } from "../features/books/bookSlice";
 
 
 
 const BACKEND_API = process.env.REACT_APP_BACKEND_API;
 
 const HomePage = () => {
-  const [books, setBooks] = useState([]);
+  // const [books, setBooks] = useState([]);
   const [pageNum, setPageNum] = useState(1);
   const totalPage = 10;
   const limit = 10;
@@ -27,24 +29,26 @@ const HomePage = () => {
     navigate(`/books/${bookId}`);
   };
 
-
-
+  const dispatch = useDispatch()
+  const books = useSelector(state => state.books.books)
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        let url = `/books?_page=${pageNum}&_limit=${limit}`;
-        if (query) url += `&q=${query}`;
-        const res = await api.get(url);
-        setBooks(res.data);
-        setErrorMessage("");
-      } catch (error) {
-        setErrorMessage(error.message);
-      }
-      setLoading(false);
-    };
-    fetchData();
+    // const fetchData = async () => {
+    //   setLoading(true);
+    //   try {
+    //     let url = `/books?_page=${pageNum}&_limit=${limit}`;
+    //     if (query) url += `&q=${query}`;
+    //     const res = await api.get(url);
+    //     setBooks(res.data);
+    //     setErrorMessage("");
+    //   } catch (error) {
+    //     setErrorMessage(error.message);
+    //   }
+    //   setLoading(false);
+    // };
+    // fetchData();
+    dispatch(getBooks({ pageNum, limit }))
+
   }, [pageNum, limit, query]);
   //--------------form
   const defaultValues = {
