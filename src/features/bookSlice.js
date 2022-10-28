@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
-import { addFavorite, fetchData, fetchFavorite, getBookDetails } from "./bookApi";
+import { fetchData, getBookDetails, addFavorite,  fetchFavorite, removeFavorite } from "./bookApi";
 
 const initialState ={
     isLoading: false,
@@ -8,7 +8,7 @@ const initialState ={
     books:[],
     readingList:[],
     book:{},
-    removedBookId:"",
+    removedBookId:""
     }
 
 const bookSlice = createSlice({
@@ -40,8 +40,18 @@ const bookSlice = createSlice({
             state.isLoading = false;
             state.error = null;
             state.readingList.push(action.payload) ;
+        },
+
+        getRemoveBookIdSuccess (state,action) {
+            state.removedBookId = action.payload;
+        },
+
+        removeFavoriteBookSuccess(  state, action) {
+            state.isLoading = false;
+            state.error = null;
+            state.books= action.payload;
+            state.removedBookId = "";
         }
-    
     },
   })
 
@@ -85,3 +95,33 @@ const bookSlice = createSlice({
     }
   }
  
+  export const getFavorite = () => async (dispatch) => {
+    dispatch(bookSlice.actions.startLoading());
+    try {
+        const response = await fetchFavorite();
+        dispatch(bookSlice.actions.getBookSuccess(response.data));
+    }
+    catch (error) {
+        dispatch(bookSlice.actions.hasError(error.message));
+    }
+  }
+
+  export const getRemoveBookId = (removedBookId) => async(dispatch) => {
+    dispatch(bookSlice.actions.getRemoveBookIdSuccess(removedBookId))
+  }
+
+  export const removeReadingList = (removedBookId) => async (dispatch) => {
+    dispatch(bookSlice.actions.startLoading());
+    try {
+        await removeFavorite(removedBookId);
+        const response = await fetchFavorite();
+        console.log("res", response);
+        dispatch(bookSlice.actions.removeFavoriteBookSuccess(response.data));
+        toast.success("The book has been removed");
+    }
+    catch (error) {
+        dispatch(bookSlice.actions.hasError(error.message));
+    }
+  }
+
+  

@@ -2,15 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Container, Button, Box, Card, Stack, CardMedia, CardActionArea, Typography, CardContent } from "@mui/material";
 import { ClipLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import api from "../apiService";
+import { getFavorite,getRemoveBookId,removeReadingList } from "../features/bookSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const BACKEND_API = process.env.REACT_APP_BACKEND_API;
 
 const ReadingPage = () => {
-  const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [removedBookId, setRemovedBookId] = useState("");
+
+  const dispatch= useDispatch();
+  const {books,isLoading,removedBookId} = useSelector((state)=> state.book);
+
   const navigate = useNavigate()
 
   const handleClickBook = (bookId) => {
@@ -18,46 +19,25 @@ const ReadingPage = () => {
   };
 
   const removeBook = (bookId) => {
-    setRemovedBookId(bookId);
+    dispatch(getRemoveBookId(bookId));
   };
 
   useEffect(() => {
     if (removedBookId) return;
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const res = await api.get(`/favorites`);
-        setBooks(res.data);
-      } catch (error) {
-        toast(error.message);
-      }
-      setLoading(false);
-    };
-    fetchData();
+    dispatch(getFavorite());
   }, [removedBookId]);
 
   useEffect(() => {
     if (!removedBookId) return;
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        await api.delete(`/favorites/${removedBookId}`);
-        toast.success("The book has been removed");
-        setRemovedBookId("");
-      } catch (error) {
-        toast(error.message);
-      }
-      setLoading(false);
-    };
-    fetchData();
+    dispatch(removeReadingList(removedBookId));
   }, [removedBookId]);
 
   return (
     <Container>
       <Typography variant="h3" sx={{ textAlign: "center" }} m={3}>Book Store</Typography>
-      {loading ? (
+      {isLoading ? (
         <Box sx={{ textAlign: "center", color: "primary.main" }} >
-          <ClipLoader color="inherit" size={150} loading={true} />
+          <ClipLoader color="inherit" size={150} isLoading={true} />
         </Box>
       ) : (
         <Stack direction="row" spacing={2} justifyContent="space-around" flexWrap={"wrap"}>
