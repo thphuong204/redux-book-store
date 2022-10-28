@@ -8,13 +8,20 @@ export  const fetchData = async (pageNum,limit,query) => {
       return res;
   };
 
+export const getBookDetails = async (bookId) => {
+    const res = await api.get(`/books/${bookId}`);
+    return res;
+};
+
 export const addFavorite = async (addingBook) => {
     const res = await api.post(`/favorites`, addingBook);
     return res;
 };
 
+
+
 export const fetchFavorite = async () => {
       const res = await api.get(`/favorites`);
       return res;
-  };
+};
 

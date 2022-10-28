@@ -1,12 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
-import { addFavorite, fetchData, fetchFavorite } from "./bookApi";
+import { addFavorite, fetchData, fetchFavorite, getBookDetails } from "./bookApi";
 
 const initialState ={
     isLoading: false,
     errorMessage: null,
     books:[],
     readingList:[],
+    book:{},
     removedBookId:"",
     }
 
@@ -29,6 +30,12 @@ const bookSlice = createSlice({
             state.books = action.payload
         },
 
+        getBookDetailsSuccess ( state, action) {
+            state.isLoading = false;
+            state.error = null;
+            state.book = action.payload;
+        },
+
         addFavoriteBookSuccess(state, action) {
             state.isLoading = false;
             state.error = null;
@@ -48,6 +55,19 @@ const bookSlice = createSlice({
     }
     catch (error) {
         dispatch(bookSlice.actions.hasError(error.message));
+    }
+  }
+
+  export const getBookDetail = (bookId) => async (dispatch) => {
+    dispatch(bookSlice.actions.startLoading());
+    try {
+        const response = await getBookDetails(bookId);
+        dispatch(bookSlice.actions.getBookDetailsSuccess(response.data));
+    }
+    catch (error) {
+        console.log("error Phuong",error)
+        dispatch(bookSlice.actions.hasError(error.message));
+        toast.error(error.message);
     }
   }
 

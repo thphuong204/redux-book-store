@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { ClipLoader } from "react-spinners";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
-import api from "../apiService";
 import { Container, Button, Box, Grid, Stack, Typography } from "@mui/material";
-import { addReadingList } from "../features/bookSlice";
+import { addReadingList,getBookDetail } from "../features/bookSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const BACKEND_API = process.env.REACT_APP_BACKEND_API;
 
 const BookDetailPage = () => {
-  const [loading, setLoading] = useState(false);
-  const [book, setBook] = useState(null);
-  const [addingBook, setAddingBook] = useState(false);
   const params = useParams();
   const bookId = params.id;
+  const {isLoading, book} = useSelector(state => state.book);
+  const [addingBook, setAddingBook] = useState(false);
 
   const dispatch = useDispatch();
   const addToReadingList = (book) => {
@@ -27,25 +24,14 @@ const BookDetailPage = () => {
   }, [addingBook]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const res = await api.get(`/books/${bookId}`);
-        console.log("res book", res)
-        setBook(res.data);
-      } catch (error) {
-        toast.error(error.message);
-      }
-      setLoading(false);
-    };
-    fetchData();
+    dispatch(getBookDetail(bookId));
   }, [bookId]);
 
   return (
     <Container>
-      {loading ? (
+      {isLoading ? (
         <Box sx={{ textAlign: "center", color: "primary.main" }} >
-          <ClipLoader color="#inherit" size={150} loading={true} />
+          <ClipLoader color="#inherit" size={150} isLoading={true} />
         </Box>
       ) : (
         <Grid container spacing={2} p={4} mt={5} sx={{ border: "1px solid black" }}>
