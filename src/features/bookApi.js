@@ -18,10 +18,13 @@ export const addFavorite = async (addingBook) => {
     return res;
 };
 
-
-
 export const fetchFavorite = async () => {
       const res = await api.get(`/favorites`);
+      return res;
+};
+
+export const removeFavorite = async (removedBookId) => {
+      const res = await api.delete(`/favorites/${removedBookId}`);
       return res;
 };
 
