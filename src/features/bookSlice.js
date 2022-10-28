@@ -3,10 +3,9 @@ import { fetchData } from "./bookApi";
 
 const initialState ={
     isLoading: false,
-    error: null,
+    errorMessage: null,
     books:[],
     readingList:[],
-    errorMessage: "",
     removedBookId:"",
     }
 
@@ -20,11 +19,10 @@ const bookSlice = createSlice({
 
           hasError(state, action) {
             state.isLoading = false;
-            state.error = action.payload;
+            state.errorMessage = action.payload;
           },
 
         getBookSuccess(state, action) {
-            console.log(action.payload)
             state.isLoading = false;
             state.error = null;
             state.books = action.payload
@@ -39,12 +37,12 @@ const bookSlice = createSlice({
     dispatch(bookSlice.actions.startLoading());
     try {
         const response = await fetchData(pageNum,limit,query);
-        console.log("respose Phuong", response);
+        console.log("response Phuong",response)
         dispatch(bookSlice.actions.getBookSuccess(response.data));
     }
     catch (error) {
-        console.log("error",error)
-        dispatch(bookSlice.actions.hasError(error));
+        console.log("error Phuong",error)
+        dispatch(bookSlice.actions.hasError(error.message));
     }
   }
 
