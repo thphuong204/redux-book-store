@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchData } from "./bookApi";
+import { toast } from "react-toastify";
+import { addFavorite, fetchData, fetchFavorite } from "./bookApi";
 
 const initialState ={
     isLoading: false,
@@ -15,17 +16,23 @@ const bookSlice = createSlice({
     reducers: {
         startLoading(state) {
             state.isLoading = true;
-          },
+        },
 
-          hasError(state, action) {
+        hasError(state, action) {
             state.isLoading = false;
             state.errorMessage = action.payload;
-          },
+        },
 
         getBookSuccess(state, action) {
             state.isLoading = false;
             state.error = null;
             state.books = action.payload
+        },
+
+        addFavoriteBookSuccess(state, action) {
+            state.isLoading = false;
+            state.error = null;
+            state.readingList.push(action.payload) ;
         }
     
     },
@@ -37,14 +44,24 @@ const bookSlice = createSlice({
     dispatch(bookSlice.actions.startLoading());
     try {
         const response = await fetchData(pageNum,limit,query);
-        console.log("response Phuong",response)
         dispatch(bookSlice.actions.getBookSuccess(response.data));
     }
     catch (error) {
-        console.log("error Phuong",error)
         dispatch(bookSlice.actions.hasError(error.message));
     }
   }
 
-
+  export const addReadingList = (addingBook) => async (dispatch) => {
+    dispatch(bookSlice.actions.startLoading());
+    try {
+        const response = await addFavorite(addingBook);
+        dispatch(bookSlice.actions.addFavoriteBookSuccess(response.data));
+        toast.success("The book has been added to the reading list!");
+    }
+    catch (error) {
+        console.log("error Phuong",error)
+        dispatch(bookSlice.actions.hasError(error.message));
+        toast.error(error.message);
+    }
+  }
  
