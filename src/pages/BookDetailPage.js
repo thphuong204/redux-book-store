@@ -21,11 +21,11 @@ const BookDetailPage = () => {
   useEffect(() => {
     if (!addingBook) return;
     dispatch(addReadingList(addingBook))
-  }, [addingBook]);
+  }, [addingBook,dispatch]);
 
   useEffect(() => {
     dispatch(getBookDetail(bookId));
-  }, [bookId]);
+  }, [bookId,dispatch]);
 
   return (
     <Container>

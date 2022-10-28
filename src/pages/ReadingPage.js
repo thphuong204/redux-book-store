@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Container, Button, Box, Card, Stack, CardMedia, CardActionArea, Typography, CardContent } from "@mui/material";
 import { ClipLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
@@ -25,12 +25,12 @@ const ReadingPage = () => {
   useEffect(() => {
     if (removedBookId) return;
     dispatch(getFavorite());
-  }, [removedBookId]);
+  }, [removedBookId,dispatch]);
 
   useEffect(() => {
     if (!removedBookId) return;
     dispatch(removeReadingList(removedBookId));
-  }, [removedBookId]);
+  }, [removedBookId,dispatch]);
 
   return (
     <Container>
