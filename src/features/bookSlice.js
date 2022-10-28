@@ -26,19 +26,19 @@ const bookSlice = createSlice({
 
         getBookSuccess(state, action) {
             state.isLoading = false;
-            state.error = null;
+            state.errorMessage = null;
             state.books = action.payload
         },
 
         getBookDetailsSuccess ( state, action) {
             state.isLoading = false;
-            state.error = null;
+            state.errorMessage = null;
             state.book = action.payload;
         },
 
         addFavoriteBookSuccess(state, action) {
             state.isLoading = false;
-            state.error = null;
+            state.errorMessage = null;
             state.readingList.push(action.payload) ;
         },
 
@@ -48,7 +48,7 @@ const bookSlice = createSlice({
 
         removeFavoriteBookSuccess(  state, action) {
             state.isLoading = false;
-            state.error = null;
+            state.errorMessage = null;
             state.books= action.payload;
             state.removedBookId = "";
         }
